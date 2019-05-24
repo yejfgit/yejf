@@ -49,7 +49,10 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>1.3.7</version>
-				<!--放开这块注释，则运行mvn deploy命令就会打包镜像-->
+				<!--放开这块注释，则运行mvn deploy命令就会打包镜像
+				mvn dockerfile:build
+				sudo docker images
+				sudo docker run &#45;&#45;name discovery -p 8800:8800 -d &#45;&#45;it 镜像名-->
 				<executions>
 					<execution>
 						<id>default</id>
