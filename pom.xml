@@ -19,6 +19,7 @@
 	<modules>
 		<module>yejf-web</module>
 		<module>yejf-core</module>
+		<module>yejf-samples</module>
 	</modules>
 	
 	<dependencies>

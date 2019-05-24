@@ -1,6 +1,6 @@
-package com.yejf.web.config;
+package com.yejf.samples.springboot.config;
 
-import com.yejf.core.netty.NettyServer;
+import com.yejf.core.netty.NettyClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,14 +12,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class NettyConfig {
 
+    @Value("${netty.server.host}")
+    private String host;
     @Value("${netty.server.port}")
     private Integer port;
 
     @Bean
-    public NettyServer nettyServer() throws Exception {
-        NettyServer nettyServer = new NettyServer();
-        nettyServer.start(port);
-        return nettyServer;
+    public NettyClient nettyClient() throws Exception {
+        NettyClient nettyClient = new NettyClient();
+        nettyClient.start(host,port);
+        return nettyClient;
     }
 
 }

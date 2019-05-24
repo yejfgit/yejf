@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.yejf</groupId>
-		<artifactId>yejf</artifactId>
+		<artifactId>yejf-samples</artifactId>
 		<version>1.0.0</version>
 	</parent>
-    <artifactId>yejf-web</artifactId>
+	<artifactId>yejf-samples-springboot</artifactId>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 
@@ -27,17 +27,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
+			<groupId>com.yejf</groupId>
+			<artifactId>yejf-core</artifactId>
+			<version>${parent.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>com.yejf</groupId>
-            <artifactId>yejf-core</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -47,5 +42,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

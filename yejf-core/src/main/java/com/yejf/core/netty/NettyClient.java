@@ -44,57 +44,23 @@ public class NettyClient {
                         pipeline.addLast(new RpcDecoder(RpcResponse.class));
                         //客户端处理类
                         pipeline.addLast(new ClientHandler());
-
-
                     }
                 });
         //发起异步连接请求，绑定连接端口和host信息
         final ChannelFuture future = b.connect(host, port).sync();
 
-        future.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture arg0) throws Exception {
-                if (future.isSuccess()) {
-                    log.info("连接服务器成功");
-                } else {
-                    log.info("连接服务器失败");
-                    future.cause().printStackTrace();
-                    group.shutdownGracefully(); //关闭线程组
-                }
+        future.addListener((ChannelFutureListener) arg0 -> {
+            if (future.isSuccess()) {
+                log.info("连接服务器成功");
+            } else {
+                log.info("连接服务器失败");
+                future.cause().printStackTrace();
+                group.shutdownGracefully(); //关闭线程组
             }
         });
 
         this.channel = future.channel();
 
-    }
-
-    public static void main(String[] args) throws Exception {
-        NettyClient nettyClient = new NettyClient();
-        String host = "127.0.0.1";
-        int port = 8888;
-        nettyClient.start(host,port);
-
-        //Thread.sleep(5000);
-
-        Channel channel = nettyClient.getChannel();
-        //消息体
-        RpcRequest request = new RpcRequest();
-        request.setId(UUID.randomUUID().toString());
-        request.setData("client1.message");
-        //channel对象可保存在map中，供其它地方发送消息
-        channel.writeAndFlush(request);
-
-
-        NettyClient nettyClient2 = new NettyClient();
-        nettyClient2.start(host,port);
-
-        Channel channel2 = nettyClient.getChannel();
-        //消息体
-        RpcRequest request2 = new RpcRequest();
-        request2.setId(UUID.randomUUID().toString());
-        request2.setData("client2.message");
-        //channel对象可保存在map中，供其它地方发送消息
-        channel2.writeAndFlush(request2);
     }
 
 }
