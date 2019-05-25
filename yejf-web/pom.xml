@@ -10,6 +10,7 @@
     <artifactId>yejf-web</artifactId>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
+	<version>${project.parent.version}</version>
 
 	<dependencies>
 		<dependency>
@@ -35,7 +36,7 @@
         <dependency>
             <groupId>com.yejf</groupId>
             <artifactId>yejf-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
@@ -44,6 +45,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.spotify</groupId>
@@ -53,7 +62,7 @@
 				mvn dockerfile:build
 				sudo docker images
 				sudo docker run &#45;&#45;name discovery -p 8800:8800 -d &#45;&#45;it 镜像名-->
-				<executions>
+				<!--<executions>
 					<execution>
 						<id>default</id>
 						<goals>
@@ -61,7 +70,7 @@
 							<goal>push</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions>-->
 				<configuration>
 					<repository>${docker.image.prefix}/${project.artifactId}</repository>
 					<buildArgs>
@@ -69,6 +78,22 @@
 					</buildArgs>
 				</configuration>
 			</plugin>
+			<!--<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>-->
 		</plugins>
 	</build>
 	
