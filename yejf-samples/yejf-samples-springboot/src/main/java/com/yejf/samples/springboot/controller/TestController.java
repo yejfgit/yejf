@@ -1,25 +1,26 @@
-package com.yejf.netty;
+package com.yejf.samples.springboot.controller;
 
-import com.yejf.BaseTest;
 import com.yejf.core.netty.NettyClient;
 import com.yejf.core.netty.model.RpcRequest;
 import io.netty.channel.Channel;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
 /**
  * @author yejf
- * @date 2019/5/24 17:03
+ * @date 2019/5/29 11:46
  */
-public class NettyTest extends BaseTest {
+@RestController
+public class TestController {
 
     @Autowired
     private NettyClient nettyClient;
 
-    @Test
-    public void sendMsgTest() throws InterruptedException {
+    @GetMapping("/test")
+    public String test(){
         Channel channel = nettyClient.getChannel();
         //消息体
         RpcRequest request = new RpcRequest();
@@ -27,8 +28,6 @@ public class NettyTest extends BaseTest {
         request.setData("client1.message");
         //channel对象可保存在map中，供其它地方发送消息
         channel.writeAndFlush(request);
-
-        Thread.sleep(5000);
-
+        return "yejf-samples-springboot";
     }
 }

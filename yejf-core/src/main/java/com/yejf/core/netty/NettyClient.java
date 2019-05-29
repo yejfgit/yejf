@@ -13,6 +13,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author yejf
@@ -26,40 +28,50 @@ public class NettyClient {
     }
 
     public void start(String host,int port) throws Exception {
-        final EventLoopGroup group = new NioEventLoopGroup();
+        Executor executor = Executors.newSingleThreadExecutor();
 
-        Bootstrap b = new Bootstrap();
-        // 使用NioSocketChannel来作为连接用的channel类
-        b.group(group).channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                // 绑定连接初始化器
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        log.info("正在连接中...");
-                        ChannelPipeline pipeline = ch.pipeline();
-                        //编码request
-                        pipeline.addLast(new RpcEncoder(RpcRequest.class));
-                        //解码response
-                        pipeline.addLast(new RpcDecoder(RpcResponse.class));
-                        //客户端处理类
-                        pipeline.addLast(new ClientHandler());
-                    }
-                });
-        //发起异步连接请求，绑定连接端口和host信息
-        final ChannelFuture future = b.connect(host, port).sync();
+        executor.execute(() -> {
+            final EventLoopGroup group = new NioEventLoopGroup();
 
-        future.addListener((ChannelFutureListener) arg0 -> {
-            if (future.isSuccess()) {
-                log.info("连接服务器成功");
-            } else {
-                log.info("连接服务器失败");
-                future.cause().printStackTrace();
-                group.shutdownGracefully(); //关闭线程组
+            Bootstrap b = new Bootstrap();
+            // 使用NioSocketChannel来作为连接用的channel类
+            b.group(group).channel(NioSocketChannel.class)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    // 绑定连接初始化器
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            log.info("正在连接中...");
+                            ChannelPipeline pipeline = ch.pipeline();
+                            //编码request
+                            pipeline.addLast(new RpcEncoder(RpcRequest.class));
+                            //解码response
+                            pipeline.addLast(new RpcDecoder(RpcResponse.class));
+                            //客户端处理类
+                            pipeline.addLast(new ClientHandler());
+                        }
+                    });
+            //发起异步连接请求，绑定连接端口和host信息
+            ChannelFuture future = null;
+            try {
+                future = b.connect(host, port).sync();
+            } catch (InterruptedException e) {
+                log.error("NettyClient ChannelFuture InterruptedException",e);
             }
-        });
 
-        this.channel = future.channel();
+            ChannelFuture finalFuture = future;
+            future.addListener((ChannelFutureListener) arg0 -> {
+                if (finalFuture.isSuccess()) {
+                    log.info("连接服务器成功");
+                } else {
+                    log.info("连接服务器失败");
+                    finalFuture.cause().printStackTrace();
+                    group.shutdownGracefully(); //关闭线程组
+                }
+            });
+
+            this.channel = future.channel();
+        });
 
     }
 

@@ -1,7 +1,7 @@
 FROM java:8
 VOLUME /tmp
-ARG JAR_FILE
-ADD ${JAR_FILE} app.jar
+#ARG JAR_FILE
+ADD yejf-samples-springboot-1.0.0.jar app.jar
 RUN bash -c 'touch /app.jar'
-EXPOSE 8800
+#EXPOSE 8800
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

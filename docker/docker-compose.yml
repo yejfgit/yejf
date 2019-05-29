@@ -1,0 +1,20 @@
+#docker-compose up
+version: "3"
+services:
+  yejf-web:
+    image: yejf/yejf-web
+#    networks:
+#      - eureka-net
+    ports:
+      - "8186:8186"
+      - "8889:8889"
+
+  yejf-samples-springboot:    #
+    image: yejf/yejf-samples-springboot
+#    networks:
+#      - eureka-net
+    ports:
+      - "8281:8281"
+    user: root
+    links:
+      - yejf-web

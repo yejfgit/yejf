@@ -18,7 +18,13 @@ public class NettyConfig {
     @Bean
     public NettyServer nettyServer() throws Exception {
         NettyServer nettyServer = new NettyServer();
-        nettyServer.start(port);
+        new Thread(() -> {
+            try {
+                nettyServer.start(port);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
         return nettyServer;
     }
 
